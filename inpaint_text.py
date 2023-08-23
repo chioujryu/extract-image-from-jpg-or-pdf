@@ -59,14 +59,10 @@ def inpaint_text(img:np.array=None,
         #Define the line and inpaint
         cv2.line(mask, (x_mid0, y_mid0), (x_mid1, y_mi1), 255,    
         thickness)
-        inpainted_img = cv2.inpaint(img, mask, 1, cv2.INPAINT_NS)   # INPAINT_TELEA
+        inpainted_img = cv2.inpaint(img, mask, 1, cv2.INPAINT_NS)   # INPAINT_TELEA    # INPAINT_NS
                  
     return(inpainted_img)
 
-
-
-
-img_text_removed = inpaint_text(img_path = "/opt/cosmo_home/side_project/extract-image-from-jpg-or-pdf/data/jpg/page0.jpg")
 
 # 記錄結束時間
 end_time = time.time()
@@ -75,4 +71,4 @@ end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"The function took {elapsed_time:.2f} seconds to complete.")
 
-cv2.imwrite('text_removed_image.jpg', cv2.cvtColor(img_text_removed, cv2.COLOR_BGR2RGB))
+#cv2.imwrite('text_removed_image.jpg', cv2.cvtColor(img_text_removed, cv2.COLOR_BGR2RGB))
