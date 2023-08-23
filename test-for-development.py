@@ -20,17 +20,16 @@ images = convert_pdf_to_jpg_linux_os('/opt/cosmo_home/side_project/extract-image
 gray = cv2.cvtColor(images[0], cv2.COLOR_BGR2GRAY)    # cv2.COLOR_BGR2GRAY
 ret, output1 = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY)     # 如果大於 127 就等於 255，反之等於 0。
 
-show_image(output1, 'rgb')
+print(output1.shape)
+
 
 # weights for the detector and recognizer.
 pipeline = keras_ocr.pipeline.Pipeline()
 
-
-
-img = keras_ocr.tools.read(output1) 
-prediction_groups = pipeline.recognize([img])
+img = keras_ocr.tools.read("/opt/cosmo_home/side_project/extract-image-from-jpg-or-pdf/data/jpg/page0.jpg") 
+print(img.shape)
 
 #img_text_removed = inpaint_text('traffic-signs.jpg', pipeline)
-#img_text_removed = inpaint_text(img = img, 
-#                                pipeline = pipeline)
+img_text_removed = inpaint_text(img = img, 
+                                pipeline = pipeline)
 

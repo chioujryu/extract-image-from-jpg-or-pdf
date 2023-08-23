@@ -3,6 +3,10 @@ import keras_ocr
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+
+# 記錄開始時間
+start_time = time.time()
 
 #General Approach.....
 #Use keras OCR to detect text, define a mask around the text, and inpaint the
@@ -21,10 +25,16 @@ def midpoint(x1, y1, x2, y2):
 
 #Main function that detects text and inpaints. 
 #Inputs are the image path and kreas_ocr pipeline
-def inpaint_text(img:np.array, pipeline, img_path:str = ""):
+def inpaint_text(img:np.array=None, 
+                 pipeline=keras_ocr.pipeline.Pipeline, 
+                 img_path:str = ""):
     # read the image 
     if (img_path != ""):
         img = keras_ocr.tools.read(img_path) 
+
+    # keras-ocr will automatically download pretrained
+    # weights for the detector and recognizer.
+    pipeline = keras_ocr.pipeline.Pipeline()
     
     # Recogize text (and corresponding regions)
     # Each list of predictions in prediction_groups is a list of
@@ -49,18 +59,20 @@ def inpaint_text(img:np.array, pipeline, img_path:str = ""):
         #Define the line and inpaint
         cv2.line(mask, (x_mid0, y_mid0), (x_mid1, y_mi1), 255,    
         thickness)
-        inpainted_img = cv2.inpaint(img, mask, 7, cv2.INPAINT_NS)
+        inpainted_img = cv2.inpaint(img, mask, 1, cv2.INPAINT_NS)   # INPAINT_TELEA
                  
     return(inpainted_img)
 
-'''
-# keras-ocr will automatically download pretrained
-# weights for the detector and recognizer.
-pipeline = keras_ocr.pipeline.Pipeline()
 
-img_text_removed = inpaint_text("data/jpg/page0.jpg", pipeline)
 
-plt.imshow(img_text_removed)
+
+img_text_removed = inpaint_text(img_path = "/opt/cosmo_home/side_project/extract-image-from-jpg-or-pdf/data/jpg/page0.jpg")
+
+# 記錄結束時間
+end_time = time.time()
+
+# 計算並打印所需時間
+elapsed_time = end_time - start_time
+print(f"The function took {elapsed_time:.2f} seconds to complete.")
 
 cv2.imwrite('text_removed_image.jpg', cv2.cvtColor(img_text_removed, cv2.COLOR_BGR2RGB))
-'''
