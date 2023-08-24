@@ -8,7 +8,7 @@ from pdf2image import convert_from_path # 如果要使用 convert_from_path 的�
 import cv2
 import keras_ocr
 import math
-from inpaint_text import *
+from image_processing import *
 from extract_image_from_pdf import *
 from image_display_and_save import *
 from convert_pdf_to_jpg import *
@@ -35,14 +35,12 @@ filtered_bb_infos = get_filter_bb(bb_infos)
 
 masked_image = mask_outside_bounding_box(raw_images[0], filtered_bb_infos[0])
 
-# 轉換圖片到灰階
-gray_image = cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY)
 
-# 二值化
-ret, gray = cv2.threshold(gray_image, 70, 255, cv2.THRESH_BINARY)     # 如果大於 127 就等於 255，反之等於 0。
 
-# 使用Canny進行邊緣檢測
-edges = cv2.Canny(gray, 20, 30)  # 這裡的100和200是閾值，你可以根據需要進行
+edges = canny_processing(image = masked_image, 
+                            binary_threshold = 70, 
+                            canny_threshold1 = 20, 
+                            canny_threshold2 = 30)
 
 # 獲取 bb 資訊
 image, bb_infos = get_image_bb( edges,
@@ -56,8 +54,6 @@ masked_image = mask_outside_bounding_box(raw_images[0], filtered_bb_infos[0])
 
 # 儲存圖片
 cv2.imwrite('edge_image.jpg', masked_image)
-
-
 
 
 
