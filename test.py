@@ -18,44 +18,44 @@ from get_bounding_box import *
 # 記錄開始時間
 start_time = time.time()
 
-raw_image = convert_pdf_to_jpg_windows_os("data/pdf/1_pic.pdf", "poppler-23.08.0/Library/bin")
+# 獲取 raw data
+#raw_image = convert_pdf_to_jpg_windows_os("data/pdf/1_pic.pdf", "poppler-23.08.0/Library/bin")
+raw_images = convert_pdf_to_jpg_linux_os("data/pdf/1_pic.pdf")
 
-img = cv2.imread("output/bounding_box_image_0.jpg")
+# 將文字抹除
+inpainted_texts_imgs = inpaint_texts(raw_images)
 
-inpaint_texts_img = inpaint_texts(img)
+# 獲取 bb 資訊
+image, bb_infos = get_image_bb( inpainted_texts_imgs[0],
+                                binary_threshold=70,
+                                bounding_box_size=(50,50))
 
-image, bb_infos = get_image_bb(inpaint_texts_img[0],
-                  binary_threshold=100,
-                  bounding_box_size=(50,50))
+# 過濾 bb
+filtered_bb_infos = get_filter_bb(bb_infos)
 
-filtered_bb_infos = get_filter_bb_boxes(bb_infos)
+masked_image = mask_outside_bounding_box(raw_images[0], filtered_bb_infos[0])
 
-croped_image = crop_images(raw_image[0], filtered_bb_infos)
+# 轉換圖片到灰階
+gray_image = cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY)
 
-show_image(croped_image[0], "rgb")
+# 二值化
+ret, gray = cv2.threshold(gray_image, 70, 255, cv2.THRESH_BINARY)     # 如果大於 127 就等於 255，反之等於 0。
 
+# 使用Canny進行邊緣檢測
+edges = cv2.Canny(gray, 20, 30)  # 這裡的100和200是閾值，你可以根據需要進行
 
+# 獲取 bb 資訊
+image, bb_infos = get_image_bb( edges,
+                                binary_threshold=70,
+                                bounding_box_size=(50,50))
 
-'''
-# convert BGR to GRAY
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# 過濾 bb
+filtered_bb_infos = get_filter_bb(bb_infos)
 
-ret, gray = cv2.threshold(gray, binary_threshold, 255, cv2.THRESH_BINARY)     # 如果大於 127 就等於 255，反之等於 0。
+masked_image = mask_outside_bounding_box(raw_images[0], filtered_bb_infos[0])
 
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, bounding_box_size)
-gradient = cv2.morphologyEx(gray, cv2.MORPH_GRADIENT, kernel)
-
-contours = cv2.findContours(gradient, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
-
-bb_info = []
-
-for cnt in contours:
-    x,y,w,h = cv2.boundingRect(cnt)
-    cv2.rectangle(image, (x,y), (x+w,y+h), (0,0,255))
-    coord = [x, y, w, h] 
-    bb_info.append(coord)
-
-'''
+# 儲存圖片
+cv2.imwrite('edge_image.jpg', masked_image)
 
 
 

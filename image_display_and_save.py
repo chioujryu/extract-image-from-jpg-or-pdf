@@ -26,7 +26,7 @@ def show_image(image:np.array, format:str):
         plt.show() 
 
 
-def save_images_to_output(images: np.array, base_filename: str = 'bounding_box_image'):
+def save_images_to_output(images: np.array, base_filename: str = 'bounding_box_image', format: str="rgb"):
     """
     Description:
         儲存多張圖片
@@ -34,6 +34,7 @@ def save_images_to_output(images: np.array, base_filename: str = 'bounding_box_i
     Parameters:
         images (np.array):  四維矩陣，分別是 [圖片張數, 長, 寬, 通道數]
         base_filename (str): image 的圖片名稱
+        format(str): 分別有 "rgb" 跟 "gray"
         
     Examples:
         >>> save_images_to_output(images, "image")
@@ -45,16 +46,28 @@ def save_images_to_output(images: np.array, base_filename: str = 'bounding_box_i
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
 
-    # 判斷images是否是一維陣列（代表只有一張照片資訊）
-    # 你可以透過檢查images的第一個元素是否是整數來判斷
-    if len(images.shape) == 3:
-        images = np.expand_dims(images, axis=0)
-    
-    for index, image in enumerate(images):
-        # 為每張圖片生成獨特的檔名
-        filename = f"{base_filename}_{index}.jpg"
-        output_path = os.path.join(output_directory, filename)
+    if (format == "rbg"):
+        # 判斷images是否是三維陣列（代表只有一張照片資訊）
+        if len(images.shape) == 3:
+            images = np.expand_dims(images, axis=0)
         
-        cv2.imwrite(output_path, cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        for index, image in enumerate(images):
+            # 為每張圖片生成獨特的檔名
+            filename = f"{base_filename}_{index}.jpg"
+            output_path = os.path.join(output_directory, filename)
+            
+            cv2.imwrite(output_path, cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+    if (format == "gray"):
+        # 判斷images是否是二維陣列（代表只有一張照片資訊）
+        if len(images.shape) == 2:
+            images = np.expand_dims(images, axis=0)
+        
+        for index, image in enumerate(images):
+            # 為每張圖片生成獨特的檔名
+            filename = f"{base_filename}_{index}.jpg"
+            output_path = os.path.join(output_directory, filename)
+            
+            cv2.imwrite(output_path, cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
 

@@ -1,10 +1,10 @@
 import cv2
 import numpy as np
 
-def get_image_bb(image:np.array=None,
+def get_image_bb( image:np.array=None,
                   image_path:str=None,
-                  binary_threshold:int=175,
-                  bounding_box_size:tuple=(50,50)) -> (np.array, list):
+                  binary_threshold:int=70,
+                  bounding_box_size:tuple=(50,50),) -> (np.array, list):
     '''
     Description:
         獲取單張圖片的 bounding box 資訊
@@ -24,10 +24,14 @@ def get_image_bb(image:np.array=None,
     if (image_path != None):
         image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
 
-    # convert BGR to GRAY
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    ret, gray = cv2.threshold(gray, binary_threshold, 255, cv2.THRESH_BINARY)     # 如果大於 127 就等於 255，反之等於 0。
+    # 如果照片是彩色的話，就轉換成灰階
+    if (len(image.shape) == 3):
+        # convert BGR to GRAY
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image.copy()  # 如果已經是灰階，直接複製
+    
+    ret, gray = cv2.threshold(gray, binary_threshold, 255, cv2.THRESH_BINARY)  
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, bounding_box_size)
     gradient = cv2.morphologyEx(gray, cv2.MORPH_GRADIENT, kernel)
@@ -44,7 +48,7 @@ def get_image_bb(image:np.array=None,
 
     return image, bb_info
 
-def get_filter_bb_boxes(bb_info:list) -> list:
+def get_filter_bb(bb_info:list) -> list:
 
     # 計算每個 bounding box 的面積
     areas = [box[2]*box[3] for box in bb_info]
