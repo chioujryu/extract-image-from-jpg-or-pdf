@@ -1,4 +1,4 @@
-# **extract-image-from-pdf**
+# **Extract image from jpg or pdf**
 除了導入的套件要安裝之外，下面這些套件也必須要安裝
 
 * pip install tensorflow==2.8.3
