@@ -138,3 +138,5 @@ def canny_processing(image:np.array=None,
     edges = cv2.Canny(gray, canny_threshold1, canny_threshold2)
 
     return edges
+
+
