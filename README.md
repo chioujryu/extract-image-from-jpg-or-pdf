@@ -6,9 +6,15 @@
 * conda install cuda -c nvidia
 
 ## **安裝環境**
+### 一般環境創建
 ```
 pip install -r requirements.txt
 ```
+### 使用Anaconda創建環境
+```
+conda env create -f environment.yml
+```
+这个命令会读取 environment.yml 文件，并创建一个具有相同依赖的新环境。
 
 ## **使用說明**
 ```

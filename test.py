@@ -16,7 +16,9 @@
 import model_inference
 
 # 初始化
-prompt=" Question: What is in this picture? Answer:"
+prompt=" Question: What is in this picture? tell me more detail. Answer:"
+image_url = "https://img.onl/sDBysN"
+image_url = "https://media.istockphoto.com/id/484131476/photo/mixed-breed-dog-selfie-photo.jpg?s=612x612&w=0&k=20&c=QDbV3v6J_Ayh0QHgQ9cqobLxBQwEReEOT9t0KdikoBs="
 
 
 # # 記錄開始時間
@@ -73,7 +75,7 @@ prompt=" Question: What is in this picture? Answer:"
 # cv2.imwrite('croped_image.jpg', croped_image)
 
 
-text = model_inference.image_to_text(image_url="https://img.onl/sDBysN", prompt=prompt)
+text = model_inference.image_to_text(image_url=image_url, image=None, prompt=prompt)
 print(text)
 
 
